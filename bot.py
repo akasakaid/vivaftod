@@ -97,37 +97,43 @@ class Vivaftntod:
             "accept-language": "en,en-US;q=0.9",
         }
         res = self.http(url, headers, json.dumps(data))
+        if "ok" not in res.text.lower():
+            self.log(f"{kuning}something error?? try again later !")
+            return 60
+        # if "ok" in res.text.lower():
+        balance = res.json()["data"]["balance"]
+        draft_balance = res.json()["data"]["balanceDraft"]
+        next_claim = res.json()["data"]["nextClaimTime"]
+        self.log(f"{hijau}balance : {putih}{balance}")
+        self.log(f"{hijau}draft balance : {putih}{draft_balance}")
+        if next_claim > 0:
+            self.log(f"{kuning}no time to claim !")
+            self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
+            return next_claim
+        cookie = self.cookie_dict_to_string(res.cookies.get_dict())
+        headers["cookie"] = cookie
+        data = json.dumps({})
+        url_claim = "https://tgames-vivaftn.bcsocial.net/panel/games/claim"
+        res = self.http(url_claim, headers, data)
         if "ok" in res.text.lower():
-            balance = res.json()["data"]["balance"]
-            draft_balance = res.json()["data"]["balanceDraft"]
-            next_claim = res.json()["data"]["nextClaimTime"]
-            self.log(f"{hijau}balance : {putih}{balance}")
-            self.log(f"{hijau}draft balance : {putih}{draft_balance}")
-            if next_claim > 0:
-                self.log(f"{kuning}no time to claim !")
-                self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
-                return next_claim
-
-            cookie = self.cookie_dict_to_string(res.cookies.get_dict())
-            headers["cookie"] = cookie
-            data = json.dumps({})
-            url_claim = "https://tgames-vivaftn.bcsocial.net/panel/games/claim"
-            res = self.http(url_claim, headers, data)
-            if "ok" in res.text.lower():
-                self.log(f"{hijau}claim successfully !")
-            else:
-                self.log(f"{merah}claim failure !")
-            url_user = "https://tgames-vivaftn.bcsocial.net/panel/users/getUser"
-            res = self.http(url_user, headers, data)
-            balance = res.json()["data"]["balance"]
-            draft_balance = res.json()["data"]["balanceDraft"]
-            next_claim = res.json()["data"]["nextClaimTime"]
-            self.log(f"{hijau}balance : {putih}{balance}")
-            self.log(f"{hijau}draft balance : {putih}{draft_balance}")
-            if next_claim > 0:
-                self.log(f"{kuning}no time to claim !")
-                self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
-                return next_claim
+            self.log(f"{hijau}claim successfully !")
+        else:
+            self.log(f"{merah}claim failure !")
+        url_user = "https://tgames-vivaftn.bcsocial.net/panel/users/getUser"
+        res = self.http(url_user, headers, data)
+        if len(res.text) <= 0:
+            self.log(f'{kuning}something error ? try again later !')
+            return 60
+        
+        balance = res.json()["data"]["balance"]
+        draft_balance = res.json()["data"]["balanceDraft"]
+        next_claim = res.json()["data"]["nextClaimTime"]
+        self.log(f"{hijau}balance : {putih}{balance}")
+        self.log(f"{hijau}draft balance : {putih}{draft_balance}")
+        if next_claim > 0:
+            self.log(f"{kuning}no time to claim !")
+            self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
+            return next_claim
 
     def cookie_dict_to_string(self, dict_cookie):
         string_cookie = ""
