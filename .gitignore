@@ -8,3 +8,4 @@ sessions_*
 !bot.py
 *.json
 *.txt
+!config.json
