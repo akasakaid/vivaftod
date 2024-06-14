@@ -1,0 +1,10 @@
+__pycache__
+env
+sessions
+*.session
+sessions_*
+*.log
+*.py
+!bot.py
+*.json
+*.txt
