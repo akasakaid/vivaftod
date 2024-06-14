@@ -266,7 +266,7 @@ class Vivaftntod:
                         phone = Path(session).stem
                         phonef = phone.replace(phone[5:8], "****")
                         self.log(f"{hijau}start using phone : {putih}{phonef}")
-                        result = self.telegram_connect(phone)
+                        result = self.telegram_connect(phone,req_data=True)
                         if result is False:
                             continue
 
