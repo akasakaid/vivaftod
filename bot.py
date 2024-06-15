@@ -116,6 +116,7 @@ class Vivaftntod:
         next_claim = res.json()["data"]["nextClaimTime"]
         captcha = res.json()["data"]["capcha"]
         cookie = self.cookie_dict_to_string(res.cookies.get_dict())
+        open('cookie.txt','w').write(cookie)
         headers["cookie"] = cookie
         self.log(f"{hijau}balance : {putih}{balance}")
         self.log(f"{hijau}draft balance : {putih}{draft_balance}")
