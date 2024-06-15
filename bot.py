@@ -138,9 +138,9 @@ class Vivaftntod:
         self.log(f"{hijau}claim successfully !")
         url_user = "https://tgames-vivaftn.bcsocial.net/panel/users/getUser"
         res = self.http(url_user, headers, data)
-        if len(res.text) <= 0:
+        if "data" not in res.text:
             self.log(f"{kuning}something error ? try again later !")
-            return 0
+            return 3600
 
         balance = res.json()["data"]["balance"]
         draft_balance = res.json()["data"]["balanceDraft"]
