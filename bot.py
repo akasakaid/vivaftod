@@ -79,19 +79,16 @@ class Vivaftntod:
         minute = str(minute).zfill(2)
         second = str(second).zfill(2)
         return f"{hour}:{minute}:{second}"
-    
-    def captcha_solver(self,captcha,headers):
+
+    def captcha_solver(self, captcha, headers):
         _captcha = captcha.replace("=", "")
         solve = eval(_captcha)
-        self.log(f'{kuning}captcha : {captcha} {solve}')
-        url = 'https://tgames-vivaftn.bcsocial.net/panel/users/verifyCapcha'
-        data = json.dumps({
-            "code": solve
-        })
-        res = self.http(url,headers,data)
+        self.log(f"{kuning}captcha : {captcha} {solve}")
+        url = "https://tgames-vivaftn.bcsocial.net/panel/users/verifyCapcha"
+        data = json.dumps({"code": solve})
+        res = self.http(url, headers, data)
         if "ok" in res.text.lower():
-            self.log(f'{hijau}success bypass captcha')
-        
+            self.log(f"{hijau}success bypass captcha")
 
     def login(self, data):
         url = "https://tgames-vivaftn.bcsocial.net/panel/users/login"
@@ -113,37 +110,38 @@ class Vivaftntod:
         if "ok" not in res.text.lower():
             self.log(f"{kuning}something error?? try again later !")
             return 0
-        # if "ok" in res.text.lower():
+
         balance = res.json()["data"]["balance"]
         draft_balance = res.json()["data"]["balanceDraft"]
         next_claim = res.json()["data"]["nextClaimTime"]
-        captcha = res.json()['data']['capcha']
+        captcha = res.json()["data"]["capcha"]
         cookie = self.cookie_dict_to_string(res.cookies.get_dict())
         headers["cookie"] = cookie
         self.log(f"{hijau}balance : {putih}{balance}")
         self.log(f"{hijau}draft balance : {putih}{draft_balance}")
         if len(captcha) > 0:
-            self.log(f'{kuning}captcha detected !')
-            self.captcha_solver(captcha,headers)
-            
+            self.log(f"{kuning}captcha detected !")
+            self.captcha_solver(captcha, headers)
+
         if next_claim > 0:
             self.log(f"{kuning}no time to claim !")
             self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
             return next_claim
-        
+
         data = json.dumps({})
         url_claim = "https://tgames-vivaftn.bcsocial.net/panel/games/claim"
         res = self.http(url_claim, headers, data)
-        if "ok" in res.text.lower():
-            self.log(f"{hijau}claim successfully !")
-        else:
+        if "ok" not in res.text.lower():
             self.log(f"{merah}claim failure !")
+            return 0
+        
+        self.log(f"{hijau}claim successfully !")
         url_user = "https://tgames-vivaftn.bcsocial.net/panel/users/getUser"
         res = self.http(url_user, headers, data)
         if len(res.text) <= 0:
-            self.log(f'{kuning}something error ? try again later !')
+            self.log(f"{kuning}something error ? try again later !")
             return 0
-        
+
         balance = res.json()["data"]["balance"]
         draft_balance = res.json()["data"]["balanceDraft"]
         next_claim = res.json()["data"]["nextClaimTime"]
@@ -153,7 +151,7 @@ class Vivaftntod:
             self.log(f"{kuning}no time to claim !")
             self.log(f"{kuning}next claim : {putih}{self.secto(next_claim)}")
             return next_claim
-        
+
         return 0
 
     def cookie_dict_to_string(self, dict_cookie):
@@ -207,7 +205,7 @@ class Vivaftntod:
             except Exception as e:
                 self.log(f"{merah}{e}")
                 return False
-            
+
         if req_data is False:
             me = client.get_me()
             self.log(f"{hijau}login as {me.first_name}")
@@ -290,7 +288,7 @@ class Vivaftntod:
                         phone = Path(session).stem
                         phonef = phone.replace(phone[5:8], "****")
                         self.log(f"{hijau}start using phone : {putih}{phonef}")
-                        result = self.telegram_connect(phone,req_data=True)
+                        result = self.telegram_connect(phone, req_data=True)
                         if result is False:
                             continue
                         parser = self.parse(result)
@@ -321,11 +319,12 @@ class Vivaftntod:
                     if (_min - _tot) <= 0:
                         continue
                     self.countdown(_min - _tot)
-                    
+
             self.log(f"{kuning}input number not have option !")
             input(
                 f'[{hitam}{datetime.now().isoformat(" ").split(".")[0]}] {putih}press enter to continue'
             )
+
 
 if __name__ == "__main__":
     try:
